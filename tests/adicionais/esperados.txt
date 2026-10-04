@@ -1,0 +1,12 @@
+zeros.txt 0
+uns.txt 1
+unica_celula.txt 1
+linha_unica.txt 7
+coluna_unica.txt 4
+diagonal.txt 1
+antidiagonal.txt 1
+xadrez.txt 1
+isoladas.txt 36
+serpentina.txt 1
+moldura.txt 1
+cruz_blocos.txt 1

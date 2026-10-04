@@ -1,0 +1,5 @@
+exemplo1.txt 3
+exemplo2.txt 4
+exemplo3.txt 5
+exemplo4.txt 6
+exemplo5.txt 7

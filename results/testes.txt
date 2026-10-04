@@ -1,0 +1,28 @@
+# Saida de 'make test' (executado em 04/10/2026, Linux x86_64, cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0)
+== Matrizes obrigatorias ==
+  exemplo1.txt           esperado=3  seq=3  par(2x2,4t)=3
+  exemplo2.txt           esperado=4  seq=4  par(2x2,4t)=4
+  exemplo3.txt           esperado=5  seq=5  par(2x2,4t)=5
+  exemplo4.txt           esperado=6  seq=6  par(2x2,4t)=6
+  exemplo5.txt           esperado=7  seq=7  par(2x2,4t)=7
+== Casos adicionais ==
+  zeros.txt              esperado=0  seq=0  par(2x2,4t)=0
+  uns.txt                esperado=1  seq=1  par(2x2,4t)=1
+  unica_celula.txt       esperado=1  seq=1  par(2x2,4t)=1
+  linha_unica.txt        esperado=7  seq=7  par(2x2,4t)=7
+  coluna_unica.txt       esperado=4  seq=4  par(2x2,4t)=4
+  diagonal.txt           esperado=1  seq=1  par(2x2,4t)=1
+  antidiagonal.txt       esperado=1  seq=1  par(2x2,4t)=1
+  xadrez.txt             esperado=1  seq=1  par(2x2,4t)=1
+  isoladas.txt           esperado=36  seq=36  par(2x2,4t)=36
+  serpentina.txt         esperado=1  seq=1  par(2x2,4t)=1
+  moldura.txt            esperado=1  seq=1  par(2x2,4t)=1
+  cruz_blocos.txt        esperado=1  seq=1  par(2x2,4t)=1
+== Estresse aleatorio (paralelo == sequencial) ==
+  20 matrizes aleatorias x 12 configuracoes
+== Determinismo (50 execucoes da mesma configuracao) ==
+  referencia=1015 divergencias=0
+== Entradas invalidas devem falhar com erro ==
+  inv1 rejeitada corretamente
+  inv2 rejeitada corretamente
+RESULTADO: todos os testes passaram

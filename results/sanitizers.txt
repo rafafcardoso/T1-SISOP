@@ -1,0 +1,9 @@
+# ThreadSanitizer: 'make tsan'
+  inv1 rejeitada corretamente
+  inv2 rejeitada corretamente
+RESULTADO: todos os testes passaram
+
+# Address+UndefinedBehaviorSanitizer (com detecao de vazamentos): 'make asan'
+  inv1 rejeitada corretamente
+  inv2 rejeitada corretamente
+RESULTADO: todos os testes passaram

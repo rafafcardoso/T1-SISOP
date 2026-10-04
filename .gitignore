@@ -1,0 +1,4 @@
+bin/
+bin-tsan/
+bin-asan/
+tests/adicionais/grande.txt
