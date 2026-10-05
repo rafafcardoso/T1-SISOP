@@ -1,7 +1,7 @@
 # Contagem paralela de objetos em uma matriz binária
 
 **Disciplina:** Sistemas Operacionais – 2026/II – PUCRS, Escola Politécnica (Prof. Filipo Mór)
-**Autoria:** [PREENCHER nome(s) e matrícula(s)]
+**Autoria:** Rafael da Fontoura Cardoso (matrícula 24102573) – trabalho individual
 **Linguagem:** ANSI C (C89/C90) + POSIX (Pthreads) · **Plataforma:** Linux / macOS
 
 Conta *objetos* (regiões de células `1` conectadas por arestas ou cantos – **conectividade 8**) em uma
@@ -75,6 +75,19 @@ python3 tests/graficos.py   # (opcional, requer matplotlib) gera os gráficos em
 
 Parâmetros do `bench` por variáveis de ambiente, ex.: `LINHAS=8000 COLUNAS=8000 THREADS="2 4 8 16" make bench`.
 
+## Resultados de desempenho
+
+Matriz 4000 x 4000 (densidade 35%, semente 42, 488.981 objetos), AMD Ryzen 5 5600X (6 núcleos / 12 threads), Ubuntu sob WSL2, `-O2`, mediana de 7 repetições:
+
+| Versão | Threads | Mediana (ms) | Aceleração | Eficiência |
+|---|---:|---:|---:|---:|
+| Sequencial | 1 | 210,69 | 1,00 | 1,00 |
+| Paralela | 2 | 164,28 | 1,28 | 0,64 |
+| Paralela | 4 | 99,03 | 2,13 | 0,53 |
+| Paralela | 8 | 64,39 | 3,27 | 0,41 |
+
+Dados brutos em `results/medicoes.csv`; análise completa na seção 9 do [relatório](RELATORIO_TECNICO.md).
+
 ## Arquitetura da versão paralela
 
 1. **Fase 1 – paralela.** A matriz é dividida em `NBL x NBC` blocos (sobras distribuídas às primeiras faixas).
@@ -106,4 +119,4 @@ results/    testes.txt, sanitizers.txt (+ medicoes.csv, resumo.md e gráficos ap
 - Nenhuma biblioteca externa; apenas libc e POSIX Threads.
 - Algoritmos clássicos: flood fill e union-find (disjoint-set) com compressão de caminho.
 - `tests/graficos.py` (opcional) usa matplotlib apenas para desenhar gráficos.
-- [PREENCHER: declare aqui o uso de ferramentas de IA, referências e como os resultados foram verificados.]
+- **Ferramenta de IA:** Claude (Anthropic) foi usado para gerar o código-fonte, os scripts de teste/medição e o esqueleto do relatório, e para apoiar o estudo do código. É a única ferramenta de IA utilizada. O autor compilou e executou o código, rodou os testes e o benchmark na própria máquina e conferiu os resultados.

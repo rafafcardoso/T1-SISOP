@@ -1,0 +1,5 @@
+data: Sun Oct  4 19:57:24 -03 2026
+kernel: Linux grandejairo 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 x86_64 GNU/Linux
+nucleos_logicos: 12
+cpu:  AMD Ryzen 5 5600X 6-Core Processor
+compilador: cc (Ubuntu 15.2.0-16ubuntu1) 15.2.0

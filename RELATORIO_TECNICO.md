@@ -3,27 +3,27 @@
 > **Disciplina:** Sistemas Operacionais - 2026/II  
 > **Professor:** Prof. Filipo Novo Mór  
 > **Instituição:** Pontifícia Universidade Católica do Rio Grande do Sul - Escola Politécnica  
-> **Repositório:** [PREENCHER URL pública do repositório]  
+> **Repositório:** [rafafcardoso/T1-SISOP](https://github.com/rafafcardoso/T1-SISOP)  
 > **Versão do relatório:** 1.0  
-> **Data:** [PREENCHER DD/MM/AAAA]
+> **Data:** 04/10/2026
 
 ## Identificação
 
 | Campo | Informação |
 |---|---|
-| Integrante 1 | [PREENCHER nome completo] |
-| Matrícula do integrante 1 | [PREENCHER] |
-| Integrante 2 | [PREENCHER ou `Não se aplica`] |
-| Matrícula do integrante 2 | [PREENCHER ou `Não se aplica`] |
-| Modalidade | [Individual / dupla] |
-| Turma | [PREENCHER] |
+| Integrante 1 | Rafael da Fontoura Cardoso |
+| Matrícula do integrante 1 | 24102573 |
+| Integrante 2 | Não se aplica |
+| Matrícula do integrante 2 | Não se aplica |
+| Modalidade | Individual |
+| Turma | [330] |
 | Estratégia paralela | Pthreads |
-| Plataforma testada | Linux (x86_64, Ubuntu 24.04) para os testes funcionais; [PREENCHER plataforma das medições de desempenho] |
+| Plataforma testada | Linux x86_64 (Ubuntu 24.04, gcc 13.3.0) nos testes funcionais registrados em `results/testes.txt`; Ubuntu sob WSL2 em Windows 11 (gcc 15.2.0) nas medições de desempenho |
 | Commit avaliado | [PREENCHER `HASH_DO_COMMIT`] |
 
 ## Resumo
 
-Este trabalho resolve a contagem de objetos (componentes conexos de células `1`, conectividade 8) em matrizes binárias. A versão sequencial, usada como referência de correção e desempenho, percorre a matriz e aplica flood fill iterativo com pilha explícita e vetor de visitados. A versão paralela usa Pthreads: a matriz é dividida em uma grade de blocos distribuídos por uma fila dinâmica de tarefas; cada thread rotula os componentes locais de seus blocos, depois analisa o perímetro dos blocos e registra equivalências entre rótulos de blocos vizinhos em um union-find compartilhado protegido por mutex, em lotes. O número de objetos é o número de raízes do union-find. As cinco matrizes obrigatórias produziram os resultados esperados nas duas versões, em 12 configurações de threads e blocos, além de 12 casos adicionais e 240 execuções sobre matrizes aleatórias, todas idênticas à referência; ThreadSanitizer e AddressSanitizer/UBSan não reportaram problemas. [PREENCHER: resumo dos resultados de desempenho e conclusão após executar `make bench`.]
+Este trabalho resolve a contagem de objetos (componentes conexos de células `1`, conectividade 8) em matrizes binárias. A versão sequencial, referência de correção e desempenho, usa flood fill iterativo com pilha explícita e vetor de visitados. A versão paralela usa Pthreads: a matriz é dividida em blocos distribuídos por uma fila dinâmica de tarefas; cada thread rotula os componentes locais, depois analisa o perímetro dos blocos e registra equivalências em um union-find compartilhado, protegido por mutex e atualizado em lotes. O número de objetos é o número de raízes do union-find. As cinco matrizes obrigatórias, 12 casos adicionais e 240 execuções aleatórias coincidiram com a referência, e ThreadSanitizer e AddressSanitizer não reportaram problemas. Em uma matriz 4000 x 4000 (488.981 objetos), num Ryzen 5 5600X sob WSL2, a mediana caiu de 210,69 ms (sequencial) para 164,28, 99,03 e 64,39 ms com 2, 4 e 8 threads (aceleração 1,28, 2,13 e 3,27; eficiência 0,64, 0,53 e 0,41). O ganho é real, mas sublinear: parte do custo vem de trabalho extra do algoritmo paralelo e de limites de memória.
 
 **Palavras-chave:** sistemas operacionais; paralelismo; processos; threads; conectividade 8; flood fill; componentes conexos.
 
@@ -104,13 +104,13 @@ O projeto contém duas implementações funcionalmente equivalentes:
 
 | Item | Especificação |
 |---|---|
-| Processador | [PREENCHER modelo] |
-| Núcleos físicos | [PREENCHER] |
-| Processadores lógicos | [PREENCHER] |
-| Memória RAM | [PREENCHER] |
-| Sistema operacional | [PREENCHER] |
-| Arquitetura | [PREENCHER] |
-| Compilador | gcc 13.3.0 (testes funcionais) / [PREENCHER se diferente nas medições] |
+| Processador | AMD Ryzen 5 5600X 6-Core Processor |
+| Núcleos físicos | 6 |
+| Processadores lógicos | 12 (SMT) |
+| Memória RAM | [16GB] |
+| Sistema operacional | Windows 11 com WSL2 (Ubuntu; kernel Linux 6.6.87.2-microsoft-standard-WSL2) |
+| Arquitetura | x86_64 |
+| Compilador | gcc 13.3.0 (testes funcionais) / cc (Ubuntu) 15.2.0 (medições) |
 | Padrão da linguagem | C89/C90 |
 | APIs POSIX utilizadas | `pthread_create`, `pthread_join`, `pthread_mutex_init/lock/unlock/destroy`, `clock_gettime` |
 | Flags de compilação | `-std=c89 -Wall -Wextra -pedantic -O2` (+ `-pthread`) |
@@ -389,7 +389,7 @@ Todos executados na versão sequencial e em 12 configurações paralelas; **todo
 | A11 | `moldura.txt` | 13 x 17 | Objeto que contorna a matriz, 17 colunas não divisíveis | 1 |
 | A12 | `cruz_blocos.txt` | 9 x 9 | Cruz no centro (encontro de blocos) | 1 |
 | A13 | aleatórias | 1x1 a 53x61 | 20 matrizes (densidade 15% a 59%) x 12 configurações | = sequencial |
-| A14 | `bench.sh` | [PREENCHER, ex.: 4000 x 4000] | Matriz grande usada no desempenho | = sequencial (campo `resultado_correto` do CSV) |
+| A14 | `bench.sh` | 4000 x 4000 | Matriz grande usada no desempenho (densidade 35%, semente 42; 488.981 objetos) | = sequencial em todas as 28 medições (`resultado_correto = true`) |
 
 ### 8.4 Repetibilidade e determinismo
 
@@ -400,24 +400,23 @@ Todos executados na versão sequencial e em 12 configurações paralelas; **todo
 
 ## 9. Avaliação de desempenho
 
-> **Execute `make bench` na máquina usada para a entrega** e transcreva os resultados abaixo. Os valores **não** foram preenchidos porque o ambiente em que o código foi desenvolvido tinha apenas **1 núcleo lógico**, no qual nenhuma aceleração é possível (as threads apenas acrescentam sobrecarga); medidas feitas ali não representariam a sua máquina.
-
 ### 9.1 Metodologia experimental
 
 | Parâmetro | Valor adotado |
 |---|---|
-| Matriz ou conjunto de matrizes | Matriz aleatória `LINHAS x COLUNAS` (padrão 4000 x 4000), densidade 35%, semente 42, gerada por `gera-matriz` |
-| Mesmos dados em todas as versões? | Sim. Mesmo arquivo para sequencial e paralelo |
+| Matriz ou conjunto de matrizes | Matriz aleatória 4000 x 4000 (16 milhões de células), densidade 35%, semente 42, gerada por `gera-matriz`; 488.981 objetos |
+| Mesmos dados em todas as versões? | Sim. Mesmo arquivo para a versão sequencial e para a paralela |
 | Relógio/API de medição | `clock_gettime(CLOCK_MONOTONIC, ...)` |
-| Trecho medido | Do início do cálculo ao fim da contagem, incluindo alocação dos vetores auxiliares, criação/junção das threads e consolidação. **Exclui** a leitura do arquivo e a saída detalhada |
+| Trecho medido | Do início do cálculo ao fim da contagem, incluindo alocação dos vetores auxiliares, criação e junção das threads e consolidação. **Exclui** a leitura do arquivo e a saída detalhada |
 | Aquecimentos descartados | 1 (primeira repetição de cada configuração) |
-| Repetições por configuração | 7 (padrão do `bench.sh`, variável `REPS`) |
+| Repetições por configuração | 7 medidas, após o aquecimento |
 | Medida representativa | Mediana (robusta a picos causados por outros processos) |
 | Critério para dispersão | Mínimo e máximo |
-| Carga do sistema durante os testes | [PREENCHER: ex.: máquina ociosa, sem outros programas pesados] |
+| Carga do sistema durante os testes | Sem aplicativos pesados em segundo plano (WSL2 sobre Windows 11). O benchmark foi executado duas vezes; os dados aqui são os registrados em `results/` |
 | Flags de otimização | `-O2` |
+| Configurações paralelas | 2, 4 e 8 threads, grade padrão (uma faixa de linhas por thread) |
 
-Dados brutos em `results/medicoes.csv` (gerado por `make bench`).
+As medições brutas estão em [`results/medicoes.csv`](results/medicoes.csv) e o ambiente em [`results/ambiente.txt`](results/ambiente.txt).
 
 ### 9.2 Métricas
 
@@ -427,35 +426,51 @@ $$
 
 ### 9.3 Resultados consolidados
 
-[PREENCHER: copie a tabela gerada em `results/resumo.md`.]
-
-| Versão | Trabalhadores (`p`) | Tempo representativo (ms) | Dispersão (ms) | Aceleração `S(p)` | Eficiência `E(p)` | Resultado correto? |
+| Versão | Trabalhadores (`p`) | Tempo representativo (ms) | Dispersão, mín-máx (ms) | Aceleração `S(p)` | Eficiência `E(p)` | Resultado correto? |
 |---|---:|---:|---:|---:|---:|---|
-| Sequencial | 1 | [PREENCHER] | [PREENCHER] | 1,00 | 1,00 | [Sim/Não] |
-| Paralela | 2 | [PREENCHER] | [PREENCHER] | [PREENCHER] | [PREENCHER] | [Sim/Não] |
-| Paralela | 4 | [PREENCHER] | [PREENCHER] | [PREENCHER] | [PREENCHER] | [Sim/Não] |
-| Paralela | 8 | [PREENCHER] | [PREENCHER] | [PREENCHER] | [PREENCHER] | [Sim/Não] |
+| Sequencial | 1 | 210,69 | 210,22 - 223,89 | 1,00 | 1,00 | Sim |
+| Paralela | 2 | 164,28 | 161,02 - 172,04 | 1,28 | 0,64 | Sim |
+| Paralela | 4 | 99,03 | 94,87 - 104,22 | 2,13 | 0,53 | Sim |
+| Paralela | 8 | 64,39 | 63,40 - 67,25 | 3,27 | 0,41 | Sim |
+
+**Dados brutos das repetições** (ms):
+
+| Versão | `p` | Rep. 1 | Rep. 2 | Rep. 3 | Rep. 4 | Rep. 5 | Rep. 6 | Rep. 7 | Mediana |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Sequencial | 1 | 223,894 | 210,583 | 211,594 | 210,637 | 212,744 | 210,216 | 210,692 | 210,692 |
+| Paralela | 2 | 164,284 | 168,496 | 161,643 | 161,020 | 162,210 | 172,044 | 169,988 | 164,284 |
+| Paralela | 4 | 99,031 | 94,868 | 104,225 | 98,382 | 95,283 | 100,792 | 102,715 | 99,031 |
+| Paralela | 8 | 67,245 | 63,665 | 65,748 | 63,398 | 64,010 | 64,395 | 64,497 | 64,395 |
 
 ### 9.4 Gráficos
 
-Gerados por `python3 tests/graficos.py` (a partir de `results/medicoes.csv`). Após gerá-los, inclua:
+![Tempo de execução por quantidade de threads](results/grafico-tempo.png)
 
-```markdown
-![Tempo de execução](results/grafico-tempo.png)
-![Aceleração](results/grafico-aceleracao.png)
-![Eficiência](results/grafico-eficiencia.png)
-```
+**Figura 1 -** Tempo de execução (mediana; barras de erro = mínimo e máximo das 7 repetições). Fonte: elaborado pelo autor.
+
+![Aceleração por quantidade de threads](results/grafico-aceleracao.png)
+
+**Figura 2 -** Aceleração observada em função do número de threads. A linha tracejada é a aceleração ideal `S(p) = p`. Fonte: elaborado pelo autor.
+
+![Eficiência por quantidade de threads](results/grafico-eficiencia.png)
+
+**Figura 3 -** Eficiência paralela `E(p) = S(p)/p`. Fonte: elaborado pelo autor.
 
 ### 9.5 Análise dos resultados
 
-[PREENCHER interpretando os dados medidos. Pontos de partida, que dependem dos números obtidos:]
+**Ganho sobre a versão sequencial.** A versão paralela foi mais rápida em todas as configurações. Com 8 threads o tempo caiu de 210,69 ms para 64,39 ms (redução de cerca de 69%), aceleração de 3,27. Em nenhum caso a versão paralela foi mais lenta que a sequencial, portanto não há resultado de `S(p) < 1` a explicar. As medições são estáveis: a dispersão entre as 7 repetições é pequena (por exemplo, 63,40 a 67,25 ms com 8 threads). O valor máximo da versão sequencial (223,89 ms) é a primeira repetição após o aquecimento, e a mediana não é afetada por ele.
 
-- **Trechos que permanecem sequenciais** (limitam a aceleração, Lei de Amdahl): leitura, soma-prefixo, inicialização do union-find (proporcional ao número de componentes locais, que em matrizes aleatórias densas é grande) e contagem final de raízes.
-- **Sobrecarga:** criação e junção das threads em cada uma das duas fases; alocação do vetor de rótulos (4 bytes/célula, contra 1 byte do vetor de visitados na versão sequencial: maior uso de memória e de banda).
-- **Contenção:** o mutex do union-find é adquirido uma vez por lote de 512 equivalências; a fila de tarefas é adquirida uma vez por bloco.
-- **Custo da consolidação:** proporcional ao perímetro total dos blocos; aumenta com blocos menores (compare `-b` diferentes) e com a densidade.
-- **Granularidade e balanceamento:** com `-b` padrão (uma faixa por thread) o escalonamento é praticamente estático; grades com mais blocos do que threads equilibram melhor a carga, ao custo de mais fronteiras.
-- **Se `S(p) < 1`**: em matrizes pequenas, ou com mais threads do que núcleos, a sobrecarga supera o ganho. Explique qual caso ocorreu.
+**Aceleração sublinear.** A aceleração cresce com o número de threads, mas bem abaixo do ideal (`S(p) = p`), e a eficiência cai de 0,64 (2 threads) para 0,53 (4) e 0,41 (8). Isso era esperado pelos seguintes motivos. As explicações abaixo são hipóteses consistentes com a arquitetura do programa; **não foram isoladas com medições específicas**:
+
+- **Trabalho extra do algoritmo paralelo.** A versão paralela não é a sequencial dividida em partes: ela mantém um vetor de rótulos de 4 bytes por célula (64 MB nesta matriz, contra 16 MB do vetor de visitados da sequencial), executa uma segunda fase de análise de fronteiras e usa um union-find. Isso explica por que a eficiência já é de apenas 0,64 com 2 threads. Mesmo com `p = 1`, o algoritmo paralelo faria mais trabalho que o sequencial.
+- **Trechos que permanecem sequenciais** (limite de Amdahl): a soma-prefixo, a inicialização do vetor `pai` do union-find e a contagem final de raízes, todos proporcionais ao número de componentes locais, que aqui é da ordem de meio milhão. A aplicação das equivalências no union-find é serializada pelo mutex, mas feita em lotes de 512 para reduzir a contenção. Os dois pontos de junção (`join`) entre as fases também têm custo.
+- **Memória.** O flood fill faz acessos a 8 vizinhos em uma matriz de 16 milhões de células mais os vetores auxiliares. É um problema com alta demanda de memória, e todos os núcleos compartilham o cache L3 e a banda de memória, o que reduz o ganho conforme mais threads são usadas.
+- **Mais threads que núcleos físicos.** O processador tem 6 núcleos físicos e 12 lógicos (SMT). Com 8 threads, dois núcleos físicos passam a executar duas threads cada, que competem pelas mesmas unidades de execução e caches; isso reduz o ganho por thread adicional (a eficiência cai de 0,53 para 0,41).
+- **Ambiente.** As medições foram feitas sob WSL2, que acrescenta uma camada de virtualização sobre o Windows 11, o que pode introduzir alguma variação.
+
+**Granularidade e balanceamento.** Com a grade padrão (uma faixa de linhas por thread) cada thread processa praticamente um bloco, de modo que o escalonamento é quase estático. Como a matriz é aleatória e uniforme, o desbalanceamento esperado é pequeno. Grades com mais blocos do que threads (`-b`) equilibrariam melhor matrizes não uniformes, ao custo de mais fronteiras para consolidar.
+
+**Experimentos que ajudariam a confirmar as hipóteses** (não realizados): medir a versão paralela com `-t 1` (separa o custo extra do algoritmo do ganho de paralelismo), variar a grade `-b` e testar 12 threads (todos os processadores lógicos).
 
 ## 10. Tratamento de erros e qualidade do código
 
@@ -500,7 +515,11 @@ Entrada, validação, relógio e conversão de argumentos ficam em `matriz.c`; a
 
 ## 12. Conclusão
 
-[PREENCHER em dois ou três parágrafos: confirme se os objetivos foram alcançados; sintetize as evidências de correção (cinco matrizes obrigatórias, 12 casos adicionais, 240 execuções aleatórias, determinismo em 50 execuções, sanitizers limpos, testes de mutação); avalie o desempenho com base nos números da seção 9; indique o principal aprendizado sobre threads, sincronização e consolidação; registre uma melhoria futura realista (por exemplo, union-find paralelo sem lock ou paralelizar a contagem final).]
+Os objetivos do trabalho foram alcançados. As duas versões contam corretamente os objetos com conectividade 8: as cinco matrizes obrigatórias deram os resultados esperados (3, 4, 5, 6 e 7), assim como 12 casos adicionais e 240 execuções sobre matrizes aleatórias em 12 configurações de threads e blocos, incluindo a configuração extrema de um bloco por célula. O resultado é determinístico (50 execuções idênticas), e ThreadSanitizer e AddressSanitizer/UBSan não reportaram problemas. Os testes de mutação mostraram que a suíte detecta erros na consolidação das diagonais e a falta de mutex no union-find.
+
+No desempenho, a versão paralela reduziu a mediana de 210,69 ms para 64,39 ms com 8 threads em uma matriz 4000 x 4000 (aceleração 3,27), com ganho em todas as configurações testadas (2, 4 e 8 threads). A eficiência decresce com o número de threads (0,64, 0,53 e 0,41), por causa do trabalho extra do algoritmo paralelo, dos trechos sequenciais, da pressão sobre a memória e do uso de mais threads do que núcleos físicos.
+
+O principal aprendizado foi que paralelizar uma contagem de componentes conexos não é só dividir a matriz: somar as contagens locais está errado, e o ponto central do problema é reconhecer e unificar os rótulos que representam o mesmo objeto nas fronteiras. Isso exigiu decidir com cuidado o que pode ser feito sem sincronização (a rotulagem local, em que cada bloco tem um único escritor) e o que precisa de exclusão mútua (o union-find compartilhado). Como melhoria futura realista, a contagem final de raízes e a inicialização do union-find poderiam ser paralelizadas, e um union-find sem lock reduziria a serialização na consolidação.
 
 ## 13. Vídeo de apresentação
 
@@ -529,14 +548,14 @@ Entrada, validação, relógio e conversão de argumentos ficam em `matriz.c`; a
 
 | Atividade | Integrante 1 | Integrante 2 | Evidência/observação |
 |---|---|---|---|
-| Projeto da solução sequencial | [PREENCHER] | [PREENCHER] | [PREENCHER] |
-| Projeto da solução paralela | [PREENCHER] | [PREENCHER] | [PREENCHER] |
-| Sincronização/comunicação | [PREENCHER] | [PREENCHER] | [PREENCHER] |
-| Consolidação | [PREENCHER] | [PREENCHER] | [PREENCHER] |
-| Testes e medições | [PREENCHER] | [PREENCHER] | [PREENCHER] |
-| Documentação e vídeo | [PREENCHER] | [PREENCHER] | [PREENCHER] |
+| Projeto da solução sequencial | 100% | Não se aplica | Trabalho individual |
+| Projeto da solução paralela | 100% | Não se aplica | Trabalho individual |
+| Sincronização/comunicação | 100% | Não se aplica | Trabalho individual |
+| Consolidação | 100% | Não se aplica | Trabalho individual |
+| Testes e medições | 100% | Não se aplica | Trabalho individual; medições executadas pelo autor em sua máquina |
+| Documentação e vídeo | 100% | Não se aplica | Trabalho individual |
 
-Todos os integrantes declaram compreender integralmente o código, as estruturas de dados, a divisão do trabalho, a sincronização, a comunicação, a consolidação e os resultados apresentados.
+O autor declara compreender integralmente o código, as estruturas de dados, a divisão do trabalho, a sincronização, a comunicação, a consolidação e os resultados apresentados.
 
 ## 15. Ferramentas, bibliotecas, referências e códigos externos
 
@@ -546,15 +565,16 @@ Todos os integrantes declaram compreender integralmente o código, as estruturas
 | Flood fill e union-find (disjoint-set) | Algoritmos clássicos | Literatura de algoritmos (ex.: Cormen et al., *Introduction to Algorithms*, cap. de conjuntos disjuntos) | - | Sequencial e paralelo |
 | ThreadSanitizer / AddressSanitizer / UBSan | Análise dinâmica | Incluídos no gcc/clang | - | Somente testes |
 | Python 3 + matplotlib | Gráficos (tests/graficos.py) e conferência independente dos valores esperados | python.org / matplotlib.org | PSF / BSD | Somente análise, fora da solução |
-| Editor de tabelas C (filipomor.com) | Preparar matrizes | https://filipomor.com/editor-tabelas-c | - | [PREENCHER se usado] |
-| [PREENCHER: ferramentas de IA utilizadas, se houver, e como os resultados foram verificados e adaptados] | | | | |
+| Editor de tabelas C (filipomor.com) | Preparar matrizes | https://filipomor.com/editor-tabelas-c | - | Não utilizado (as matrizes obrigatórias foram transcritas do enunciado e conferidas por contagem independente) |
+| Claude (Anthropic) | Geração do código-fonte em C, dos scripts de teste e de medição e do esqueleto deste relatório; apoio ao estudo do código | claude.ai | Termos de uso do serviço | Todo o projeto. Única ferramenta de IA utilizada |
+| Verificação dos resultados | O autor compilou e executou o código, rodou a suíte de testes e o benchmark em sua própria máquina, e conferiu os resultados | - | - | Testes (`make test`), sanitizers e medições |
 
 ## 16. Checklist de entrega
 
 ### Código e execução
 
 - [x] O código segue ANSI C C89/C90.
-- [x] O projeto compila em Linux ou macOS. *(Linux testado; [PREENCHER] macOS, se possível)*
+- [x] O projeto compila em Linux ou macOS. *(Testado em Linux e em Ubuntu sob WSL2; macOS não testado)*
 - [x] A compilação ocorre sem erros e sem avisos.
 - [x] As principais chamadas POSIX têm os retornos verificados.
 - [x] Todos os recursos são finalizados ou liberados corretamente.
@@ -569,12 +589,12 @@ Todos os integrantes declaram compreender integralmente o código, as estruturas
 
 - [x] As cinco matrizes obrigatórias foram executadas nas duas versões.
 - [x] A versão paralela produziu exatamente os mesmos resultados da sequencial.
-- [ ] Foi criada pelo menos uma matriz maior para o teste de desempenho. *(`make bench`)*
-- [ ] Foram testadas pelo menos duas quantidades de threads.
-- [ ] As medições foram repetidas e o valor representativo foi explicado.
-- [ ] Tempo sequencial, tempo paralelo, aceleração e eficiência foram informados.
-- [ ] Resultados em que a versão paralela foi mais lenta foram explicados.
-- [ ] Dados brutos, tabelas e gráficos estão versionados no repositório.
+- [x] Foi criada pelo menos uma matriz maior para o teste de desempenho.
+- [x] Foram testadas pelo menos duas quantidades de threads (2, 4 e 8).
+- [x] As medições foram repetidas e o valor representativo foi explicado.
+- [x] Tempo sequencial, tempo paralelo, aceleração e eficiência foram informados.
+- [x] Resultados em que a versão paralela foi mais lenta foram explicados. *(Não ocorreu; a aceleração sublinear foi analisada na seção 9.5.)*
+- [ ] Dados brutos, tabelas e gráficos estão versionados no repositório. *(confirmar após o `push`)*
 
 ### Repositório e apresentação
 
@@ -582,9 +602,9 @@ Todos os integrantes declaram compreender integralmente o código, as estruturas
 - [x] `README.md` contém descrição, compilação, execução e arquitetura. *(preencher autoria)*
 - [x] O `Makefile` permite compilação reproduzível.
 - [x] As matrizes de teste e seus resultados estão incluídos.
-- [ ] A análise de desempenho está incluída.
+- [x] A análise de desempenho está incluída.
 - [ ] O link do vídeo está acessível e o vídeo tem até 10 minutos.
-- [ ] Ferramentas, referências, bibliotecas e códigos externos foram identificados.
+- [x] Ferramentas, referências, bibliotecas e códigos externos foram identificados.
 - [ ] O hash do commit avaliado foi registrado neste relatório.
 
 ## Apêndice A - Registro de comandos
