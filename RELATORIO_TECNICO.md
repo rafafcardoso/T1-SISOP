@@ -19,7 +19,7 @@
 | Turma | [330] |
 | Estratégia paralela | Pthreads |
 | Plataforma testada | Linux x86_64 (Ubuntu 24.04, gcc 13.3.0) nos testes funcionais registrados em `results/testes.txt`; Ubuntu sob WSL2 em Windows 11 (gcc 15.2.0) nas medições de desempenho |
-| Commit avaliado | [PREENCHER `HASH_DO_COMMIT`] |
+| Commit avaliado | [`b5579ac`] |
 
 ## Resumo
 
